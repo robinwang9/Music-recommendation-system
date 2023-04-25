@@ -2,7 +2,7 @@
 
 A recommender system built in PySpark and designed for HPC environment. Submitted as term project for DS-GA 1004 Big Data at NYU.
 
-This Introduction is written in Markdown and to give a brief overview of the project.
+This Introduction is written in Markdown and to give an overview of the project.
 
 ## Description of files:
 - `Intro.md`: This file

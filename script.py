@@ -33,17 +33,22 @@ def main(spark, file_path):
         Uncomputed dataframe of first 5 people in dataset
     '''
 
+    '''
     # This loads the parquet file with proper header decoding and schema
     data = spark.read.parquet(file_path, header=True, inferSchema=True)
                             #schema='first_name STRING, last_name STRING, age INT, income FLOAT, zipcode INT, orders INT, loyalty BOOLEAN, rewards BOOLEAN')
 
-    data.createOrReplaceTempView('people')
+    data.createOrReplaceTempView('data')
 
     top5 = spark.sql('SELECT * FROM data LIMIT 5')
 
     print('Top 5 line:')
     print(top5)
+    '''
 
+    spark = SparkSession.builder.appName("ReadParquetFile").getOrCreate()
+    parquet_file = spark.read.parquet("path/to/parquet/file")
+    parquet_file.printSchema()
 
 '''
 def main(spark, file_path):

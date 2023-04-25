@@ -44,14 +44,8 @@ def basic_query(spark, file_path):
     return top5
 
 
-
+'''
 def main(spark, file_path):
-    '''Main routine for Lab Solutions
-    Parameters
-    ----------
-    spark : SparkSession object
-    which_dataset : string, size of dataset to be analyzed
-    '''
 
     # Example Benchmarking Query
     times = bench.benchmark(spark, 5, basic_query, file_path)
@@ -61,7 +55,7 @@ def main(spark, file_path):
     print(f'Maximum Time taken to run Basic Query 5 times on {file_path}:{max(times)}')
 
     # You can do list calculations for your analysis here!
-
+'''
 
 # Only enter this block if we're in main
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ import bench
 from pyspark.sql import SparkSession
 
 
-def basic_query(spark, file_path):
+def main(spark, file_path):
     '''Construct a basic query on the people dataset
 
     This function returns a dataframe corresponding to the

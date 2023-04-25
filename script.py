@@ -34,14 +34,15 @@ def main(spark, file_path):
     '''
 
     # This loads the parquet file with proper header decoding and schema
-    people = spark.read.parquet(file_path, header=True, inferSchema=True)
+    data = spark.read.parquet(file_path, header=True, inferSchema=True)
                             #schema='first_name STRING, last_name STRING, age INT, income FLOAT, zipcode INT, orders INT, loyalty BOOLEAN, rewards BOOLEAN')
 
-    people.createOrReplaceTempView('people')
+    data.createOrReplaceTempView('people')
 
-    top5 = spark.sql('SELECT * FROM people LIMIT 5')
+    top5 = spark.sql('SELECT * FROM data LIMIT 5')
 
-    return top5
+    print('Top 5 line:')
+    print(top5)
 
 
 '''

@@ -7,7 +7,7 @@ This Introduction is written in Markdown and to give an overview of the project.
 ## Description of files:
 - `Intro.md`: This file
 - `README.md`: The original instruction file for the project
-- `schema.py`: Find the schema of the parquet files
+- `schema.py`: Explore the schema of the parquet files
     > Usage: $ spark-submit --deploy-mode client schema.py <file_path>
     - Schema of 'tracks' file:
         - recording_msid: string (nullable = true)

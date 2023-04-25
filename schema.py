@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 '''Example python script to run benchmark on a query with a file path.
 Usage:
-    $ spark-submit --deploy-mode client script.py <file_path>
+    $ spark-submit --deploy-mode client schema.py <file_path>
 '''
 
 

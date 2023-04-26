@@ -1,7 +1,12 @@
-def data_subsampling(spark, partial):
+import sys
+from pyspark import SparkConf
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *    
+    
+def data_split(spark, partial):
     '''
     Subsample the data to get a smaller dataset
-    
+        
     This function returns a dataframe corresponding to training, validation
 
     Parameters
@@ -14,12 +19,42 @@ def data_subsampling(spark, partial):
     interactions = spark.read.parquet('hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet')
 
     # Subsample the data
-    interactions = interactions.sample(False, partial, seed=100)
+    interactions = interactions.sample(False, partial, seed= 42)
     interactions.createOrReplaceTempView('interactions')
 
     # Split the data into training, validation
-    train, validation = interactions.randomSplit([0.8, 0.2], seed=100)
+    train, validation = interactions.randomSplit([0.8, 0.2], seed=42)
     train.createOrReplaceTempView('train')
     validation.createOrReplaceTempView('validation')
 
-    #return train, validation
+    return train, validation
+
+def downsampling(spark):
+    cf_val = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_validation.parquet')
+    cf_train = spark.read.parquet("hdfs:/user/bm106/pub/MSD/cf_train.parquet").repartition(100)
+    cf_val.createOrReplaceTempView('cf_val')
+
+    val_users = set([row['user_id'] for row in spark.sql("SELECT DISTINCT user_id FROM cf_val").collect()])
+    train = cf_train.filter(col('user_id').isin(val_users))
+
+    train_sample.write.mode('overwrite').parquet('hdfs:/user/zz4140/train_sample.parquet')
+
+if __name__ == '__main__':
+    '''
+    conf = SparkConf()
+    conf.set("spark.executor.memory", "16G")
+    conf.set("spark.driver.memory", '16G')
+    conf.set("spark.executor.cores", "4")
+    conf.set('spark.executor.instances','10')
+    conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    conf.set("spark.default.parallelism", "40")
+    conf.set("spark.sql.shuffle.partitions", "40")
+    '''    
+
+    spark = SparkSession.builder.appName("downsampling")\
+	.config("spark.executor.memory", "32g")\
+	.config("spark.driver.memory", "32g")\
+	.config("spark.sql.shuffle.partitions", "40")\
+	.getOrCreate()
+
+    downsampling(spark)

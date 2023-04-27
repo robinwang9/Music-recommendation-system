@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Script to get the 500 most popular songs and output this into a parquet file. NOTE: most popular is determined by number of different people who played a song, not total plays 
+'''Script to get the 500 most popular songs and output this into a parquet file. 
+Aware: Most popular is determined by number of different people who played a song, not total plays 
 Usage:
     $ spark-submit get_popular_items.py <file_path>
 '''
@@ -21,20 +22,17 @@ def main(spark, file_path):
     # Loads the original parquet files
     track_train = spark.read.parquet(file_path)
     
-    #get total plays for songs
+    # Count total plays for tracks
     track_train.createOrReplaceTempView('track_train')
     top_tracks = spark.sql('SELECT recording_msid FROM track_train ORDER BY count DESC LIMIT 500')
     
-    #confirm correct size
+    # Size = 500
     print("Total items in list:",top_tracks.count())
     print('')   
     
-    #print a few to check
+    # Check the first 15
     print('First 15:')
     top_tracks.limit(15).show() 
-    
-    #confirm correct size
-    print("Total items in list:",top_tracks.count())
     
     # Save to a new parquet file
     top_track_ids = top_songs.select(top_tracks.recording_msid)

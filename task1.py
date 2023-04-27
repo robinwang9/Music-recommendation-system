@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[16]:
-
-
 import sys
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -37,23 +31,16 @@ def partition_data(spark, subsample_rate):
     return train, validation
 
 if __name__ == '__main__':
-    spark = SparkSession.builder.appName("partition_data")        .config("spark.executor.memory", "32g")        .config("spark.driver.memory", "32g")        .config("spark.sql.shuffle.partitions", "40")        .getOrCreate()
+    spark = SparkSession.builder.appName("partition_data")\
+        .config("spark.executor.memory", "32g")\
+        .config("spark.driver.memory", "32g")\
+        .config("spark.sql.shuffle.partitions", "40")\
+        .getOrCreate()
 
     subsample_rate = 0.5
     train, validation = partition_data(spark, subsample_rate)
 
     train.write.mode('overwrite').parquet("/scratch/jw5487/listenbrainz/interactions_train_partitioned.parquet")
     validation.write.mode('overwrite').parquet("/scratch/jw5487/listenbrainz/interactions_val_partitioned.parquet")
-
-
-# In[17]:
-
-
-
-
-
-# In[ ]:
-
-
 
 

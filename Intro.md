@@ -32,3 +32,13 @@ This Introduction is written in Markdown and to give an overview of the project.
         - user_id: integer (nullable = true)
         - recording_msid: string (nullable = true)
         - count: long (nullable = true)
+- `pop_items.py`: This file returns the most popular items(500)
+    > Usage: $ spark-submit get_popular_items.py <file_path>
+    - Schema of the output file:
+        - recording_msid: string (nullable = true)
+- `baseline.py`: This file contains the baseline model
+    > $ spark-submit --driver-memory 8g --executor-memory 8g baseline.py hdfs:/user/zz4140/1004-project-2023/items_popular.parquet hdfs:/user/zz4140/1004-project-2023/validation_sort.parquet
+    - Returns:
+        - Precision at 15
+        - MAP
+        - NDCG

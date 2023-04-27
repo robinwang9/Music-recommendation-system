@@ -18,7 +18,6 @@ def data_split(spark, partial):
     # This loads the parquet file
     interactions = spark.read.parquet('hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet')
 
-    # Subsample the data
     interactions = interactions.sample(False, partial, seed= 42)
     interactions.createOrReplaceTempView('interactions')
 
@@ -29,15 +28,6 @@ def data_split(spark, partial):
 
     return train, validation
 
-def downsampling(spark):
-    cf_val = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_validation.parquet')
-    cf_train = spark.read.parquet("hdfs:/user/bm106/pub/MSD/cf_train.parquet").repartition(100)
-    cf_val.createOrReplaceTempView('cf_val')
-
-    val_users = set([row['user_id'] for row in spark.sql("SELECT DISTINCT user_id FROM cf_val").collect()])
-    train = cf_train.filter(col('user_id').isin(val_users))
-
-    train_sample.write.mode('overwrite').parquet('hdfs:/user/zz4140/train_sample.parquet')
 
 if __name__ == '__main__':
     '''

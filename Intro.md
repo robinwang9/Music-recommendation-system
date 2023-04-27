@@ -24,4 +24,10 @@ This Introduction is written in Markdown and to give an overview of the project.
         - recording_msid: string (nullable = true)
         - timestamp: timestamp (nullable = true)
 
-- `data_split.py`: This file return a validation set and subsampling the training set to 1%
+- `data_split.py`: This file return a validation set and a training data
+- `count.py`: This file counts the number of times each user_id listen to different tracks, and output the result to a parquet file
+    > Usage: $ spark-submit --deploy-mode client count.py
+    - Schema of the output file:
+        - user_id: integer (nullable = true)
+        - recording_msid: string (nullable = true)
+        - count: long (nullable = true)

@@ -12,6 +12,8 @@ def main(spark):
 
     This function returns a dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
 
+    Usage: `$ spark-submit --deploy-mode client count.py`
+
     Parameters
     ----------
     spark : spark session object
@@ -23,15 +25,14 @@ def main(spark):
     Returns : 
         Dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
     '''
-
     # This loads the Parquet file with proper header decoding and schema
-    
     interactions_df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions.parquet")
-
     interactions_df.createOrReplaceTempView('interactions_df')
 
+    # Count the number of times each user_id listen to different tracks
     count_df = interactions_df.groupBy("user_id", "recording_msid").agg(count("*").alias("count"))
     
+    # Save the dataframe to parquet file
     count_df.write.mode('overwrite').parquet('hdfs:/user/zz4140/1004-project-2023/interaction_count.parquet')
     
 

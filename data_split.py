@@ -3,6 +3,11 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *    
     
+'''
+This script is not completed yet. It does not work now.
+还没写好，现在不能用!
+'''
+
 def data_split(spark, partial):
     '''
     Subsample the data to get a smaller dataset

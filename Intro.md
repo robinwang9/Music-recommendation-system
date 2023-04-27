@@ -24,3 +24,4 @@ This Introduction is written in Markdown and to give an overview of the project.
         - recording_msid: string (nullable = true)
         - timestamp: timestamp (nullable = true)
 
+- `data_split.py`: This file return a validation set and subsampling the training set to 1%

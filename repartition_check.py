@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 '''Example python script to run benchmark on a query with a file path.
 Usage:
-    $ spark-submit --deploy-mode client schema.py <file_path>
+    $ spark-submit --deploy-mode client repartition_check.py <file_path>
 '''
 
 
@@ -47,7 +47,7 @@ def main(spark, file_path):
     '''
     spark = SparkSession.builder.appName("ReadParquetFile").getOrCreate()
     parquet_file = spark.read.parquet(file_path)
-    
+
     print(parquet_file.head())
     print("Number of rows: ", parquet_file.count())
 

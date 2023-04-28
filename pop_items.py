@@ -36,7 +36,7 @@ def main(spark, file_path):
     
     # Save to a new parquet file
     top_track_ids = top_songs.select(top_tracks.recording_msid)
-    top_track_ids.write.parquet('hdfs:/user/zz4140/1004-project-2023/items_popular.parquet')
+    top_track_ids.write.parquet('items_popular.parquet')
 
 
 # Only enter this block if we're in main

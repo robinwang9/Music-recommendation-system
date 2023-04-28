@@ -28,6 +28,8 @@ def partition_data(spark, subsample_rate):
     print(f'Train row count: {train_row_count}')
     print(f'Validation row count: {validation_row_count}')
 
+    train.write.parquet("interactions_train.parquet")
+    validation.write.parquet("interactions_val.parquet")
     return train, validation
 
 if __name__ == '__main__':
@@ -40,5 +42,5 @@ if __name__ == '__main__':
     subsample_rate = 0.5
     train, validation = partition_data(spark, subsample_rate)
 
-    train.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_train.parquet")
-    validation.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet")
+    #train.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_train.parquet")
+    #validation.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet")

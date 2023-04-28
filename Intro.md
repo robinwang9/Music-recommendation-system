@@ -46,8 +46,8 @@ This Introduction is written in Markdown and to give an overview of the project.
 ## Roadmap:
 ```mermaid
 graph LR
-    A[original dataset] --count.py--> B[user/track count]
-    B --data_split.py--> C[train/validation set]
+    A[original dataset]
+    A --data_split.py--> C[train/validation set]
     C --pop_items.py--> D[get 500 most popular items]
     D --baseline.py--> E[Baseline recommender system/evaluation]
     C --baseline.py--> E

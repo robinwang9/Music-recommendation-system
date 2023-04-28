@@ -24,7 +24,7 @@ def main(spark, file_path):
     
     # Count total plays for tracks
     track_train.createOrReplaceTempView('track_train')
-    top_tracks = spark.sql('SELECT recording_msid FROM track_train ORDER BY count DESC LIMIT 500')
+    top_tracks = spark.sql('SELECT recording_msid, count(*) as counts FROM track_train GROUP BY recording_msid ORDER BY count DESC LIMIT 500')
     
     # Size = 500
     print("Total items in list:",top_tracks.count())

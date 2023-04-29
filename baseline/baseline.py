@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 '''Script to evaluate a baseline popularity model
 Usage:
-    $ spark-submit --driver-memory 8g --executor-memory 8g baseline.py hdfs:/user/zz4140/1004-project-2023/items_popular.parquet hdfs:/user/zz4140/1004-project-2023/validation_sort.parquet
+    $ spark-submit --driver-memory 8g --executor-memory 8g baseline.py hdfs:/user/zz4140_nyu_edu/items_popular.parquet hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
 
 Returns:
     Precision at 15

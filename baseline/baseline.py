@@ -23,8 +23,8 @@ def main(spark, input_file_path, input_val_file_path):
     Parameters
     ----------
     spark : SparkSession object
-    file_path_in_base: top 500 songs hdfs:/user/zz4140/1004-project-2023/items_popular.parquet
-    file_path_in_val: sorted validation data to use hdfs:/user/zz4140/1004-project-2023/validation_sort.parquet
+    file_path_in_base: top 500 songs hdfs:/user/zz4140_nyu_edu/items_popular.parquet
+    file_path_in_val: sorted validation data to use hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
     '''        
     # Loads the parquet files
     track_pop = spark.read.parquet(input_file_path)
@@ -52,7 +52,7 @@ def main(spark, input_file_path, input_val_file_path):
    
    
     # EVALUATION
-    predictionAndLabels = user_pop_agg.join(songs_val_agg, ["user_hashId"])
+    predictionAndLabels = user_pop_agg.join(track_val_agg, ["user_hashId"])
     predictionAndLabels = predictionAndLabels.select("pop_track", "truth")
     predictionAndLabels_rdd = predictionAndLabels.rdd
     

@@ -40,7 +40,7 @@ def main(spark, file_path):
     top_tracks.limit(15).show() 
     
     # Save to a new parquet file
-    top_track_ids = top_songs.select(top_tracks.recording_msid)
+    top_track_ids = top_tracks.select(top_tracks.recording_msid)
     top_track_ids.write.parquet('items_popular.parquet')
 
 

@@ -48,7 +48,7 @@ def main(spark, input_file_path, input_val_file_path):
     
     # Collapse validation file in the same manner
     track_val_agg = track_val.groupby("user_hashId").agg(func.collect_list("track_hashId"))
-    track_val_agg = track_val.withColumnRenamed("collect_list(track_hashId)", "truth")
+    track_val_agg = track_val_agg.withColumnRenamed("collect_list(track_hashId)", "truth")
    
    
     # EVALUATION

@@ -23,8 +23,8 @@ def main(spark, input_file_path, input_val_file_path):
     Parameters
     ----------
     spark : SparkSession object
-    file_path_in_base: top 500 tracks hdfs:/user/zz4140_nyu_edu/items_popular.parquet
-    file_path_in_val: sorted validation data to use hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
+    input_file_path: top 500 tracks hdfs:/user/zz4140_nyu_edu/items_popular.parquet
+    input_val_file_path: sorted validation data to use hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
     '''        
     # Loads the parquet files
     track_pop = spark.read.parquet(input_file_path)

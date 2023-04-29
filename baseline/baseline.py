@@ -23,7 +23,7 @@ def main(spark, input_file_path, input_val_file_path):
     Parameters
     ----------
     spark : SparkSession object
-    file_path_in_base: top 500 songs hdfs:/user/zz4140_nyu_edu/items_popular.parquet
+    file_path_in_base: top 500 tracks hdfs:/user/zz4140_nyu_edu/items_popular.parquet
     file_path_in_val: sorted validation data to use hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
     '''        
     # Loads the parquet files
@@ -31,9 +31,9 @@ def main(spark, input_file_path, input_val_file_path):
     track_val = spark.read.parquet(input_val_file_path)
     
     # Create a hash column as the ID column
-    track_pop = track_pop.withColumn("track_hashId", func.hash("track_id"))
+    track_pop = track_pop.withColumn("track_hashId", func.hash("recording_msid"))
     track_val = track_val.withColumn("user_hashId", func.hash("user_id"))
-    track_val = track_val.withColumn("track_hashId", func.hash("track_id"))
+    track_val = track_val.withColumn("track_hashId", func.hash("recording_msid"))
     
     # Get the users from the val file
     users = track_val.select(track_val.user_hashId).distinct() 

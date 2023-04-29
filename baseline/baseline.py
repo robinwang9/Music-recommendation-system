@@ -3,7 +3,7 @@
 '''Script to evaluate a baseline popularity model
 Usage:
     $ spark-submit --driver-memory 8g --executor-memory 8g baseline.py hdfs:/user/zz4140_nyu_edu/items_popular.parquet hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
-
+    or spark-submit baseline.py hdfs:/user/zz4140_nyu_edu/items_popular.parquet hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
 Returns:
     Precision at 15
     MAP

@@ -44,6 +44,7 @@ This Introduction is written in Markdown and to give an overview of the project.
         - NDCG
 
 ## Roadmap:
+-`Baseline model`:
 ```mermaid
 graph LR
     A[original dataset]
@@ -51,4 +52,19 @@ graph LR
     C --pop_items.py--> D[get 500 most popular items]
     D --baseline.py--> E[Baseline recommender system/evaluation]
     C --baseline.py--> E
+```
+
+-`ALS model`:
+```mermaid
+
+graph LR
+
+A[train/val sets] --Index_Model_StringIndexer--> B[Indexed train/val sets]
+B --Single_Parameter_Tunning--> C[MAP/ncdg/rmse based on different params]
+```
+
+```mermaid
+graph LR
+C[MAP/ncdg/rmse based on different params] --Grid_Searching--> D[Best params combo]
+D --ALS Model+Best params combo--> E[Result]
 ```

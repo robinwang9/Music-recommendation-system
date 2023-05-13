@@ -1,4 +1,3 @@
-
 import sys
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -14,7 +13,7 @@ def tqdm_count_rows(iterator):
 def partition_data(spark, subsample_rate):
     # Read the data
     interactions_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train_small.parquet")
-    interactions_test = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_test_small.parquet")
+    #interactions_test = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_test_small.parquet")
 
     # Subsample the data
     interactions_train = interactions_train.sample(False, subsample_rate, seed=42)
@@ -133,5 +132,5 @@ def main():
 '''
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()
-    train, validation = main(spark)
+    train_df, val_df = main(spark)
 '''

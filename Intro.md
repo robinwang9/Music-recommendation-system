@@ -26,7 +26,7 @@ This Introduction is written in Markdown and to give an overview of the project.
 
 - `data_split.py`: This file return a validation set and a training data
     > spark-submit --deploy-mode client data_split.py
-    - We have tried to ignore the users who have less than 50 interactions, but the number of results is still too many, so we decide to ignore the users who have less than 100 interactions.
+    - We have tried to ignore the users who have less than 50 interactions, but the number of results is still too many, so we decide to ignore the users who have less than 100 interactions. 20,409,672 interactions are left in the training set after splitting, and 5103798 interactions are left in the validation set.
 - `count.py`: This file counts the number of times each user_id listen to different tracks, and output the result to a parquet file
     > Usage: $ spark-submit --deploy-mode client count.py
     - Schema of the output file:

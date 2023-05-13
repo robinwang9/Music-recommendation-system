@@ -46,11 +46,13 @@ if __name__ == '__main__':
     #train.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_train.parquet")
     #validation.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet")
 '''
-'''
+
 from pyspark.sql import SparkSession
 from pyspark.sql.window import Window
 from pyspark.sql.functions import count, row_number, rand
 from pyspark.sql.functions import round
+
+#Usage: spark-submit data_split.py
 
 def main():
     df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train_small.parquet")
@@ -77,6 +79,13 @@ def main():
     spark.stop()
 
 '''
+from pyspark.sql import SparkSession
+from pyspark.sql.window import Window
+from pyspark.sql.functions import count, row_number, rand
+from pyspark.sql.functions import round
+
+#Usage: spark-submit data_split.py
+
 def main():
     # Read the input parquet file
     interactions_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train_small.parquet")
@@ -114,6 +123,8 @@ def main():
 
     # Stop the Spark session
     spark.stop()
+
+'''
 
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()

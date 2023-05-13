@@ -75,6 +75,7 @@ def main(spark):
 
     train_df.write.parquet("interactions_train_small_80.parquet")
     val_df.write.parquet("interactions_val_small_20.parquet")
+    return train_df, val_df
 
     #spark.stop()
 

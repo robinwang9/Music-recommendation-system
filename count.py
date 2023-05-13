@@ -25,11 +25,12 @@ def main(spark, input_file):
         Dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
     '''
     # This loads the Parquet file with proper header decoding and schema
-    interactions_df = spark.read.parquet(input_file)
-    interactions_df.createOrReplaceTempView('interactions_df')
+    parquet_file = pq.ParquetFile(input_file)
+    #interactions_df = spark.read.parquet(input_file)
+    #interactions_df.createOrReplaceTempView('interactions_df')
 
     # Count interactions
-    num_rows = interactions_df.metadata.num_rows
+    num_rows = parquet_file.metadata.num_rows
 
     print("Number of rows in the Parquet file:", num_rows)
        

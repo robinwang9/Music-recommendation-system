@@ -46,6 +46,7 @@ if __name__ == '__main__':
     #train.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_train.parquet")
     #validation.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet")
 '''
+'''
 from pyspark.sql import SparkSession
 from pyspark.sql.window import Window
 from pyspark.sql.functions import count, row_number, rand
@@ -113,7 +114,7 @@ def main():
 
     # Stop the Spark session
     spark.stop()
-'''
+
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()
     main()

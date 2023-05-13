@@ -50,8 +50,8 @@ def main(spark):
     # print(f'Train row count: {train_row_count}')
     # print(f'Validation row count: {validation_row_count}')
 
-    train_df.write.parquet("interactions_train_full_80.parquet")
-    val_df.write.parquet("interactions_val_full_20.parquet")
+    train_df.write.mode("overwrite").parquet("interactions_train_full_80.parquet")
+    val_df.write.mode("overwrite").parquet("interactions_val_full_20.parquet")
     
     return train_df, val_df
 

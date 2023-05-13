@@ -59,7 +59,7 @@ def main(spark):
 
     counts = df.groupBy("user_id").count()
 
-    valid_user_ids = counts.filter(counts["count"] > 5).select("user_id")
+    valid_user_ids = counts.filter(counts["count"] >= 5).select("user_id")
 
     cleaned_df = df.join(valid_user_ids, "user_id")
 

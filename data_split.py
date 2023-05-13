@@ -52,7 +52,7 @@ from pyspark.sql.functions import count, row_number, rand
 from pyspark.sql.functions import round
 
 def main():
-    df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
+    df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train_small.parquet")
 
     counts = df.groupBy("user_id").count()
 

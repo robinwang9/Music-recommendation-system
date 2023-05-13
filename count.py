@@ -1,46 +1,14 @@
-# Import command line arguments and helper functions
+import pyarrow.parquet as pq
 import sys
 
-# And pyspark.sql to get the spark session
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import count
-import pyarrow.parquet as pq
+def count_rows(parquet_file_path):
+    parquet_file = pq.ParquetFile(parquet_file_path)
 
-
-def count_parquet_rows(input_file):
-    '''Construct a basic query on the people dataset
-
-    This function returns a dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
-
-    Usage: `$ spark-submit --deploy-mode client count.py`
-
-    Parameters
-    ----------
-    spark : spark session object
-
-    file_path : string
-        The path (in HDFS) to the CSV file, e.g.,
-        `hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet`
-
-    Returns : 
-        Dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
-    '''
-    # This loads the Parquet file with proper header decoding and schema
-    parquet_file = pq.ParquetFile(input_file)
-    #interactions_df = spark.read.parquet(input_file)
-    #interactions_df.createOrReplaceTempView('interactions_df')
-
-    # Count interactions
     num_rows = parquet_file.metadata.num_rows
 
-    return num_rows
-
-    
-# Only enter this block if we're in main
-if __name__ == "__main__":
-    # Get file_path for dataset to analyze
-    input_file = sys.argv[1]
-
-    num_rows = count_parquet_rows(input_file)
-
     print("Number of rows in the Parquet file:", num_rows)
+
+if __name__ == '__main__':
+    file_path = sys.argv[1]
+
+    count_rows(file_path)

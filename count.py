@@ -1,6 +1,5 @@
 # Import command line arguments and helper functions
 import sys
-import bench
 
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession

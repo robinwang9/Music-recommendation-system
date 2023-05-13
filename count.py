@@ -42,6 +42,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('InteractionsCount').getOrCreate()
 
     # Get file_path for dataset to analyze
-    # file_path = sys.argv[1]
+    input_file = sys.argv[1]
 
     main(spark, input_file)

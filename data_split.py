@@ -132,4 +132,4 @@ def main():
 
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()
-    main(spark)
+    train, validation = main(spark)

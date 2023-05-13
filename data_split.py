@@ -130,7 +130,8 @@ def main():
     spark.stop()
 
 '''
-
+'''
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()
     train, validation = main(spark)
+'''

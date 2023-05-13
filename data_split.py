@@ -57,6 +57,9 @@ from pyspark.sql.functions import round
 def main(spark):
     df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train_small.parquet")
 
+    # Subsample the data
+    df = df.sample(False, 0.5, seed=42)
+
     counts = df.groupBy("user_id").count()
 
     valid_user_ids = counts.filter(counts["count"] >= 5).select("user_id")

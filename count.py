@@ -1,14 +1,11 @@
-import pyarrow.parquet as pq
-import sys
+from pyspark.sql import SparkSession
 
-def count_rows(parquet_file_path):
-    parquet_file = pq.ParquetFile(parquet_file_path)
+def read_parquet_file(parquet_file_path):
 
-    num_rows = parquet_file.metadata.num_rows
+    spark = SparkSession.builder.appName("ReadParquetFile").getOrCreate()
 
-    print("Number of rows in the Parquet file:", num_rows)
+    df = spark.read.parquet(parquet_file_path)
 
-if __name__ == '__main__':
-    file_path = sys.argv[1]
+    spark.stop()
 
-    count_rows(file_path)
+    return df

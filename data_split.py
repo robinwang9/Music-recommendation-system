@@ -70,10 +70,14 @@ def main(spark):
 
     user_counts = user_counts.withColumn("rounded_count", round(user_counts["count"]))
 
-    train_counts = (user_counts["rounded_count"] * 0.8).cast("integer")
-    val_counts = user_counts["rounded_count"] - train_counts
+    user_counts_list = user_counts.collect()
 
-    train_df = cleaned_df.sampleBy("user_id", fractions={row["user_id"]: train_counts[row["user_id"]]/row["count"] for row in user_counts.collect()}, seed=42)
+    sampling_fractions = {row["user_id"]: row["rounded_count"]*0.8/row["count"] for row in user_counts_list}
+
+    # train_counts = (user_counts["rounded_count"] * 0.8).cast("integer")
+    # val_counts = user_counts["rounded_count"] - train_counts
+
+    train_df = cleaned_df.sampleBy("user_id", fractions=sampling_fractions, seed=42)
     val_df = cleaned_df.subtract(train_df)
 
     train_df.write.parquet("interactions_train_small_80.parquet")

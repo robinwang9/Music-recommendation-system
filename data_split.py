@@ -73,6 +73,8 @@ def main():
     train_df.write.parquet("interactions_train_small_80.parquet")
     val_df.write.parquet("interactions_val_small_20.parquet")
 
+    spark.stop()
+
 
 #cleaned_df.write.mode("overwrite").parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/cleaned_interactions_train.parquet")
 

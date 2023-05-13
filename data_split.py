@@ -1,3 +1,4 @@
+'''
 import sys
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -44,3 +45,44 @@ if __name__ == '__main__':
 
     #train.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_train.parquet")
     #validation.write.mode('overwrite').parquet("hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet")
+'''
+from pyspark.sql import SparkSession
+from pyspark.sql.window import Window
+from pyspark.sql.functions import count, row_number, rand
+
+# Initialize Spark session
+spark = SparkSession.builder.appName("Split Data").getOrCreate()
+
+# Read the input parquet file
+interactions_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
+
+# Count interactions for each user
+user_interactions_count = interactions_train.groupBy('user_id').agg(count('recording_msid').alias('interactions_count'))
+
+# Filter users with at least 5 interactions
+filtered_users = user_interactions_count.filter(user_interactions_count.interactions_count >= 5)
+
+# Join the filtered_users dataframe with the interactions_train dataframe
+filtered_interactions = interactions_train.join(filtered_users.select('user_id'), on='user_id', how='inner')
+
+# Add row_number for each user's interactions, partitioned by user_id and ordered by timestamp
+window = Window.partitionBy('user_id').orderBy('timestamp')
+filtered_interactions = filtered_interactions.withColumn('row_number', row_number().over(window))
+
+# Calculate the 80% split for each user
+split_ratio = 0.8
+filtered_users = filtered_users.withColumn('train_split', (filtered_users.interactions_count * split_ratio).cast('int'))
+
+# Join the filtered_interactions dataframe with the train_split value for each user
+filtered_interactions = filtered_interactions.join(filtered_users.select('user_id', 'train_split'), on='user_id', how='inner')
+
+# Split the data into training and validation sets
+train_data = filtered_interactions.filter(filtered_interactions.row_number <= filtered_interactions.train_split)
+validation_data = filtered_interactions.filter(filtered_interactions.row_number > filtered_interactions.train_split)
+
+# Save the training and validation data as parquet files
+train_data.write.parquet("hdfs:/user/zz4140/interactions_train_80.parquet")
+validation_data.write.parquet("hdfs:/user/zz4140/interactions_val_20.parquet")
+
+# Stop the Spark session
+spark.stop()

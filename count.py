@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import count
 
 
-def main(spark):
+def main(spark, input_file):
     '''Construct a basic query on the people dataset
 
     This function returns a dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
@@ -26,15 +26,14 @@ def main(spark):
         Dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
     '''
     # This loads the Parquet file with proper header decoding and schema
-    interactions_df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions.parquet")
+    interactions_df = spark.read.parquet(input_file)
     interactions_df.createOrReplaceTempView('interactions_df')
 
-    # Count the number of times each user_id listen to different tracks
-    count_df = interactions_df.groupBy("user_id", "recording_msid").agg(count("*").alias("count"))
-    
-    # Save the dataframe to parquet file
-    count_df.write.mode('overwrite').parquet('hdfs:/user/zz4140/1004-project-2023/interaction_count.parquet')
-    
+    # Count interactions
+    num_rows = interactions_df.metadata.num_rows
+
+    print("Number of rows in the Parquet file:", num_rows)
+       
 
 
 # Only enter this block if we're in main
@@ -46,4 +45,4 @@ if __name__ == "__main__":
     # Get file_path for dataset to analyze
     # file_path = sys.argv[1]
 
-    main(spark)
+    main(spark, input_file)

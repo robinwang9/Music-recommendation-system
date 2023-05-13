@@ -12,11 +12,13 @@ from pyspark.sql.functions import round
 from tqdm import tqdm
 
 #Usage: spark-submit data_split.py
+'''
 def tqdm_count_rows(iterator):
     count = 0
     for row in tqdm(iterator, desc='Counting rows'):
         count += 1
     return [count]
+'''
 
 def main(spark):
     df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
@@ -42,11 +44,11 @@ def main(spark):
     val_df = cleaned_df.subtract(train_df)
 
     # Apply tqdm progress bar to count rows in train and validation DataFrames
-    train_row_count = train_df.rdd.mapPartitions(tqdm_count_rows).sum()
-    validation_row_count = val_df.rdd.mapPartitions(tqdm_count_rows).sum()
+    # train_row_count = train_df.rdd.mapPartitions(tqdm_count_rows).sum()
+    # validation_row_count = val_df.rdd.mapPartitions(tqdm_count_rows).sum()
 
-    print(f'Train row count: {train_row_count}')
-    print(f'Validation row count: {validation_row_count}')
+    # print(f'Train row count: {train_row_count}')
+    # print(f'Validation row count: {validation_row_count}')
 
     train_df.write.parquet("interactions_train_full_80.parquet")
     val_df.write.parquet("interactions_val_full_20.parquet")

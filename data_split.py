@@ -49,7 +49,35 @@ if __name__ == '__main__':
 from pyspark.sql import SparkSession
 from pyspark.sql.window import Window
 from pyspark.sql.functions import count, row_number, rand
+from pyspark.sql.functions import round
 
+def main():
+    df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
+
+    counts = df.groupBy("user_id").count()
+
+    valid_user_ids = counts.filter(counts["count"] > 5).select("user_id")
+
+    cleaned_df = df.join(valid_user_ids, "user_id")
+
+    user_counts = cleaned_df.groupBy("user_id").count()
+
+    user_counts = user_counts.withColumn("rounded_count", round(user_counts["count"]))
+
+    train_counts = (user_counts["rounded_count"] * 0.8).cast("integer")
+    val_counts = user_counts["rounded_count"] - train_counts
+
+    train_df = cleaned_df.sampleBy("user_id", fractions={row["user_id"]: train_counts[row["user_id"]]/row["count"] for row in user_counts.collect()}, seed=42)
+    val_df = cleaned_df.subtract(train_df)
+
+    train_df.write.parquet("interactions_train_small_80.parquet")
+    val_df.write.parquet("interactions_val_small_20.parquet")
+
+
+#cleaned_df.write.mode("overwrite").parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/cleaned_interactions_train.parquet")
+
+spark.stop()
+'''
 def main():
     # Read the input parquet file
     interactions_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
@@ -87,7 +115,7 @@ def main():
 
     # Stop the Spark session
     spark.stop()
-
+'''
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()
     main()

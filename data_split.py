@@ -1,3 +1,4 @@
+'''
 import sys
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -79,8 +80,8 @@ def main(spark):
     val_df.write.parquet("interactions_val_small_20.parquet")
     return train_df, val_df
 
-    #spark.stop()
-'''
+    spark.stop()
+
 
 '''
 from pyspark.sql import SparkSession
@@ -129,8 +130,7 @@ def main():
     spark.stop()
 
 '''
-'''
+
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()
     train_df, val_df = main(spark)
-'''

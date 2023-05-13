@@ -79,8 +79,8 @@ def main():
     validation_data = filtered_interactions.filter(filtered_interactions.row_number > filtered_interactions.train_split)
 
     # Save the training and validation data as parquet files
-    train_data.write.parquet("hdfs:/user/zz4140/interactions_train_small_80.parquet")
-    validation_data.write.parquet("hdfs:/user/zz4140/interactions_val_small_20.parquet")
+    train_data.write.parquet("interactions_train_small_80.parquet")
+    validation_data.write.parquet("interactions_val_small_20.parquet")
 
     # Stop the Spark session
     spark.stop()

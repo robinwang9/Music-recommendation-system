@@ -7,7 +7,7 @@ from pyspark.sql.functions import count
 import pyarrow.parquet as pq
 
 
-def main(spark, input_file):
+def count_parquet_rows(input_file):
     '''Construct a basic query on the people dataset
 
     This function returns a dataframe contains user_id, recording_msid, and count(times per user_id listen to different track).
@@ -33,17 +33,14 @@ def main(spark, input_file):
     # Count interactions
     num_rows = parquet_file.metadata.num_rows
 
-    print("Number of rows in the Parquet file:", num_rows)
-       
+    return num_rows
 
-
+    
 # Only enter this block if we're in main
 if __name__ == "__main__":
-
-    # Create the spark session object
-    spark = SparkSession.builder.appName('InteractionsCount').getOrCreate()
-
     # Get file_path for dataset to analyze
     input_file = sys.argv[1]
 
-    main(spark, input_file)
+    num_rows = count_parquet_rows(input_file)
+
+    print("Number of rows in the Parquet file:", num_rows)

@@ -42,8 +42,8 @@ def main(spark):
     val_df = cleaned_df.subtract(train_df)
 
     # Apply tqdm progress bar to count rows in train and validation DataFrames
-    train_row_count = train.rdd.mapPartitions(tqdm_count_rows).sum()
-    validation_row_count = validation.rdd.mapPartitions(tqdm_count_rows).sum()
+    train_row_count = train_df.rdd.mapPartitions(tqdm_count_rows).sum()
+    validation_row_count = val_df.rdd.mapPartitions(tqdm_count_rows).sum()
 
     print(f'Train row count: {train_row_count}')
     print(f'Validation row count: {validation_row_count}')

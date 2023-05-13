@@ -75,10 +75,6 @@ def main():
 
     spark.stop()
 
-
-#cleaned_df.write.mode("overwrite").parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/cleaned_interactions_train.parquet")
-
-spark.stop()
 '''
 def main():
     # Read the input parquet file

@@ -11,7 +11,7 @@ from pyspark.sql.functions import count, row_number, rand
 from pyspark.sql.functions import round
 from tqdm import tqdm
 
-#Usage: spark-submit data_split.py
+#Usage: spark-submit --deploy-mode client data_split.py
 '''
 def tqdm_count_rows(iterator):
     count = 0

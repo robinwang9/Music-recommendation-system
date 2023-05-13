@@ -79,7 +79,7 @@ def main():
 '''
 def main():
     # Read the input parquet file
-    interactions_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
+    interactions_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train_small.parquet")
 
     # Count interactions for each user
     user_interactions_count = interactions_train.groupBy('user_id').agg(count('recording_msid').alias('interactions_count'))

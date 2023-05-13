@@ -82,6 +82,9 @@ def main():
     train_data.write.parquet("interactions_train_small_80.parquet")
     validation_data.write.parquet("interactions_val_small_20.parquet")
 
+    print(f"Number of rows in train_data: {train_data.count()}")
+    print(f"Number of rows in validation_data: {validation_data.count()}")
+
     # Stop the Spark session
     spark.stop()
 

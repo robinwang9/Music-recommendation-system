@@ -54,7 +54,7 @@ from pyspark.sql.functions import round
 
 #Usage: spark-submit data_split.py
 
-def main():
+def main(spark):
     df = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train_small.parquet")
 
     counts = df.groupBy("user_id").count()
@@ -76,7 +76,7 @@ def main():
     train_df.write.parquet("interactions_train_small_80.parquet")
     val_df.write.parquet("interactions_val_small_20.parquet")
 
-    spark.stop()
+    #spark.stop()
 
 '''
 from pyspark.sql import SparkSession
@@ -128,4 +128,4 @@ def main():
 
 if __name__ == "__main__":
     spark = SparkSession.builder.appName("Split Data").getOrCreate()
-    main()
+    main(spark)

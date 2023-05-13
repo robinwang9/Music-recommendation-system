@@ -4,6 +4,7 @@ import sys
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import count
+import pyarrow.parquet as pq
 
 
 def main(spark, input_file):

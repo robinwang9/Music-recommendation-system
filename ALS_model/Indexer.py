@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml import Pipeline
+from pyspark.sql.functions import col
 
 '''
 Usage: spark-submit --deploy-mode client Indexer.py
@@ -23,8 +24,9 @@ def main(spark):
     df = df.drop("timestamp")
 
     # Count the number of times a user has listened to a song
-    df_count = df.groupBy("user_id", "recording_msid_index").count()
-    df_count = df_count.withColumnRenamed("count", "count_combination")
+    df_count = spark.sql("SELECT user_id, recording_msid_index, COUNT(*) AS count FROM interactions GROUP BY user_id, recording_msid_index")
+    #df_count = df.groupBy("user_id", "recording_msid_index").count()
+    #df_count = df_count.withColumnRenamed("count", "count_combination")
 
     # train_df.write.mode("overwrite").parquet("indexed_train_small.parquet")
     df_count.write.parquet("indexed_train_small.parquet")

@@ -8,7 +8,7 @@ import numpy as np
 
 '''
 Usage:
-$ spark-submit  --driver-memory=4g --executor-memory=4g --conf "spark.blacklist.enabled=false" sample_indexer.py hdfs:/user/zz4140/1004-project-2023/interactions_train.parquet hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_test.parquet
+$ spark-submit --driver-memory=4g --executor-memory=4g --conf "spark.blacklist.enabled=false" sample_indexer.py hdfs:/user/zz4140/interactions_train_small_80.parquet hdfs:/user/zz4140/interactions_val_small_20.parquet hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_test.parquet
 '''
 
 def main(spark, train_path, val_path, test_path):
@@ -40,23 +40,14 @@ def main(spark, train_path, val_path, test_path):
     indexer_all = pipeline.fit(train)
 
     train_idx = indexer_all.transform(train)
-    indexer_all.write().overwrite().save('hdfs:/user/zz4140/indexer_downsample.parquet')
+    indexer_all.write().save('hdfs:/user/zz4140/indexer_downsample.parquet')
 
     train_idx.repartition(5000,'user_idx')
-    train_idx.write.mode('overwrite').parquet('hdfs:/user/zz4140/train_index_downsample.parquet')
+    train_idx.write.parquet('hdfs:/user/zz4140/train_index_downsample.parquet')
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
-    #conf = SparkConf()
-    #conf.set("spark.executor.memory", "16G")
-    #conf.set("spark.driver.memory", '16G')
-    #conf.set("spark.executor.cores", "4")
-    #conf.set('spark.executor.instances','10')
-    #conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    #conf.set("spark.default.parallelism", "40")
-    #conf.set("spark.sql.shuffle.partitions", "40")
-    #spark = SparkSession.builder.config(conf=conf).appName('first_train').getOrCreate()
-
+    # Create the spark session object
     spark = SparkSession.builder.appName('first_step').getOrCreate()
 
     # Get file_path for dataset to analyze

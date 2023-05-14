@@ -22,16 +22,16 @@ def main(spark):
     df_count = spark.sql("SELECT user_id, recording_msid, COUNT(*) AS count FROM interactions GROUP BY user_id, recording_msid")
     df_count = df_count.select(col("user_id"), col("recording_msid"), col("count").cast("integer"))
 
-    # train_df.write.mode("overwrite").parquet("indexed_train_small.parquet")
-    df_count.write.parquet("indexed_train_small.parquet")
-
     # Use StringIndexer to convert string to numeric
-    # indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
-    # pipeline = Pipeline(stages=[indexer_recording])
-    # indexer = pipeline.fit(df)
-    # train_df = indexer.transform(df)
+    indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
+    pipeline = Pipeline(stages=[indexer_recording])
+    indexer = pipeline.fit(df_count)
+    train_df = indexer.transform(df_count)
 
-    return df_count
+    train_df.write.mode("overwrite").parquet("indexed_train_small.parquet")
+    # train_df.write.parquet("indexed_train_small.parquet")
+
+    return train_df
     spark.stop()
 
 if __name__ == "__main__":
@@ -41,4 +41,4 @@ if __name__ == "__main__":
     # Get file_path for dataset to analyze
     #parquet_file_path = sys.argv[1]
 
-    df_count = main(spark)
+    train_df = main(spark)

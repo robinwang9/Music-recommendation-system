@@ -12,23 +12,24 @@ def main(spark):
     df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_train_small_80.parquet")
 
     # Use StringIndexer to convert string to numeric
-    indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
-    pipeline = Pipeline(stages=[indexer_recording])
-    indexer = pipeline.fit(df)
-    train_df = indexer.transform(df)
+    # indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
+    # pipeline = Pipeline(stages=[indexer_recording])
+    # indexer = pipeline.fit(df)
+    # train_df = indexer.transform(df)
+    
     #df = indexer_recording.fit(df).transform(df)
 
     # Drop the timestamp column
-    # df = df.drop("timestamp")
+    df = df.drop("timestamp")
 
     # Count the number of times a user has listened to a song
-    #df_count = df.groupBy("user_id", "recording_msid_index").count()
-    #df_count = df_count.withColumnRenamed("count", "count_combination")
+    df_count = df.groupBy("user_id", "recording_msid_index").count()
+    df_count = df_count.withColumnRenamed("count", "count_combination")
 
     # train_df.write.mode("overwrite").parquet("indexed_train_small.parquet")
-    train_df.write.parquet("indexed_train_small.parquet")
+    df_count.write.parquet("indexed_train_small.parquet")
 
-    return train_df
+    return df_count
     spark.stop()
 
 if __name__ == "__main__":
@@ -38,4 +39,4 @@ if __name__ == "__main__":
     # Get file_path for dataset to analyze
     #parquet_file_path = sys.argv[1]
 
-    train_df = main(spark)
+    df_count = main(spark)

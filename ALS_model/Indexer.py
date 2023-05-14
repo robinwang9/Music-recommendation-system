@@ -4,6 +4,7 @@ from pyspark.ml.feature import StringIndexer
 '''
 Usage: spark-submit --deploy-mode client Indexer.py
 Usage: spark-submit --deploy-mode cluster Indexer.py
+Usage: spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 Indexer.py
 '''
 
 def main(spark):
@@ -17,10 +18,10 @@ def main(spark):
     df = df.drop("timestamp")
 
     # Count the number of times a user has listened to a song
-    df_count = df.groupBy("user_id", "recording_msid_index").count()
-    df_count = df_count.withColumnRenamed("count", "count_combination")
+    #df_count = df.groupBy("user_id", "recording_msid_index").count()
+    #df_count = df_count.withColumnRenamed("count", "count_combination")
 
-    df_count.write.parquet("indexed_train_small.parquet")
+    df.write.parquet("indexed_train_small.parquet")
 
     #return df_count
     spark.stop()

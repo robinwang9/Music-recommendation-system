@@ -20,11 +20,12 @@ def main(spark):
     
     #df = indexer_recording.fit(df).transform(df)
 
+    df.createOrReplaceTempView("interactions")
     # Drop the timestamp column
     df = df.drop("timestamp")
 
     # Count the number of times a user has listened to a song
-    df_count = spark.sql("SELECT user_id, recording_msid_index, COUNT(*) AS count FROM df GROUP BY user_id, recording_msid_index")
+    df_count = spark.sql("SELECT user_id, recording_msid_index, COUNT(*) AS count FROM interactions GROUP BY user_id, recording_msid_index")
     #df_count = df.groupBy("user_id", "recording_msid_index").count()
     #df_count = df_count.withColumnRenamed("count", "count_combination")
 

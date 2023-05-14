@@ -25,7 +25,8 @@ def main(spark):
     #df_count = df.groupBy("user_id", "recording_msid_index").count()
     #df_count = df_count.withColumnRenamed("count", "count_combination")
 
-    train_df.write.mode("overwrite").parquet("indexed_train_small.parquet")
+    # train_df.write.mode("overwrite").parquet("indexed_train_small.parquet")
+    train_df.write.parquet("indexed_train_small.parquet")
 
     return train_df
     spark.stop()

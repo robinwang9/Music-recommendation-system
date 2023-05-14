@@ -20,7 +20,7 @@ def main(spark):
 
     # Count the number of times a user has listened to a song
     df_count = spark.sql("SELECT user_id, recording_msid, COUNT(*) AS count FROM interactions GROUP BY user_id, recording_msid")
-    df_count = df_count.select(col("count").cast("integer"))
+    df_count = df_count.select(col("user_id"), col("recording_msid"), col("count").cast("integer"))
 
     # train_df.write.mode("overwrite").parquet("indexed_train_small.parquet")
     df_count.write.parquet("indexed_train_small.parquet")

@@ -20,7 +20,7 @@ def main(spark):
     df_count.write.parquet("indexed_train_small.parquet")
 
     return df_count
-    #spark.stop()
+    spark.stop()
 
 if __name__ == "__main__":
     # Create the spark session object

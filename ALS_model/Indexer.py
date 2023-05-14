@@ -7,7 +7,7 @@ Usage: spark-submit --deploy-mode cluster Indexer.py
 '''
 
 def main(spark):
-    df = spark.read.parquet("hdfs:/user/zz4140/interactions_train_small_80.parquet")
+    df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_train_small_80.parquet")
     # Use StringIndexer to convert string to numeric
     indexer = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index")
     df = indexer.fit(df).transform(df)

@@ -25,7 +25,7 @@ def main(spark):
     df = df.drop("timestamp")
 
     # Count the number of times a user has listened to a song
-    df_count = spark.sql("SELECT user_id, recording_msid_index, COUNT(*) AS count FROM interactions GROUP BY user_id, recording_msid")
+    df_count = spark.sql("SELECT user_id, recording_msid, COUNT(*) AS count FROM interactions GROUP BY user_id, recording_msid")
     #df_count = df.groupBy("user_id", "recording_msid_index").count()
     #df_count = df_count.withColumnRenamed("count", "count_combination")
 

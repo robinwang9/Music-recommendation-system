@@ -15,7 +15,7 @@ def main(spark):
     df = df.drop("timestamp")
     # Count the number of times a user has listened to a song
     df_count = df.groupBy("user_id", "recording_msid_index").count()
-    df_count = df_count.withColumnRenamed("count", "count_combination")
+    #df_count = df_count.withColumnRenamed("count", "count_combination")
 
     df_count.write.parquet("indexed_train_small.parquet")
 

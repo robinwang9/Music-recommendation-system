@@ -1,5 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import StringIndexer
+from pyspark.ml import Pipeline
 
 '''
 Usage: spark-submit --deploy-mode client Indexer.py

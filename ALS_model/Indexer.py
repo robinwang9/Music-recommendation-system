@@ -23,15 +23,15 @@ def main(spark):
     df_count = df_count.select(col("user_id"), col("recording_msid"), col("count").cast("integer"))
 
     # Use StringIndexer to convert string to numeric
-    indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
-    pipeline = Pipeline(stages=[indexer_recording])
-    indexer = pipeline.fit(df_count)
-    train_df = indexer.transform(df_count)
+    # indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
+    # pipeline = Pipeline(stages=[indexer_recording])
+    # indexer = pipeline.fit(df_count)
+    # train_df = indexer.transform(df_count)
 
-    train_df.repartition(5000, 'recording_msid_index').write.mode("overwrite").parquet("indexed_train_small.parquet", compression="gzip")
+    df_count.repartition(5000, 'recording_msid_index').write.mode("overwrite").parquet("indexed_train_small.parquet")
     # train_df.write.parquet("indexed_train_small.parquet")
 
-    return train_df
+    return df_count
     spark.stop()
 
 if __name__ == "__main__":
@@ -41,4 +41,4 @@ if __name__ == "__main__":
     # Get file_path for dataset to analyze
     #parquet_file_path = sys.argv[1]
 
-    train_df = main(spark)
+    df_count = main(spark)

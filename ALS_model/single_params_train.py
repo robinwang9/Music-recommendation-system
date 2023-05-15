@@ -16,21 +16,28 @@ from pyspark.sql.functions import col, expr
 '''
 Usage:
 $ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" param_train_1st.py hdfs:/user/zz4140/train_index_downsample.parquet hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet hdfs:/user/zz4140/indexer_downsample.parquet
+$ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" param_train_1st.py hdfs:/user/zz4140/interactions_train_small_80.parquet hdfs:/user/zz4140/1004-project-2023/interactions_val_small_20.parquet hdfs:/user/zz4140/indexer_downsample.parquet
 '''
 
-def main(spark, train_path, val_path, indexer_model):
-    '''
-    '''
+def main(spark, train_path, val_path):
+    # Load train, val data
     train = spark.read.parquet(train_path)
     val = spark.read.parquet(val_path)
-    user_index = PipelineModel.load(indexer_model)
-    val = user_index.transform(val)
-    val = val.select('user_idx','recording_idx','count')
 
-    user_id = val.select('user_idx').distinct()
-    true_tracks = val.select('user_idx', 'recording_idx').orderBy('user_idx',"count",ascending=False)\
-                .groupBy('user_idx')\
-                .agg(expr('collect_list(recording_idx) as tracks'))
+    # Use StringIndexer to convert string to numeric
+    indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_idx", handleInvalid='skip')
+    pipeline = Pipeline(stages=[indexer_recording])
+    indexer_train = pipeline.fit(train)
+    indexer_val = pipeline.fit(val)
+    train_df = indexer_train.transform(train)
+    val_df = indexer_val.transform(val)    
+
+    # user_index = PipelineModel.load(indexer_model)
+    # val = user_index.transform(val)
+    # val = val.select('user_idx','recording_idx','count')
+
+    user_id = val.select('user_id').distinct()
+    true_tracks = val.select('user_id', 'recording_idx').orderBy('user_id',"count",ascending=False).groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
     rank_val =  [10,20,30,40,50,75,100,125] #default is 10
     #reg_val =  [0.001, 0.005, 0.01, 0.1, 0.2, 0.5, 1, 10]  #default is 1
@@ -42,15 +49,14 @@ def main(spark, train_path, val_path, indexer_model):
     rmses=[]
 
     for i in rank_val: #change to reg or alpha #then set the rest to default
-        als = ALS(maxIter=10, userCol ='user_idx', itemCol = 'recording_idx', implicitPrefs = True,
+        als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True,
         nonnegative=True, ratingCol = 'count', rank = i, regParam = 1, alpha = 1, numUserBlocks = 50, numItemBlocks = 50, seed=123)
         model = als.fit(train)
 
         pred_tracks = model.recommendForUserSubset(user_id,500)
-        pred_tracks = pred_tracks.select("user_idx", col("recommendations.recording_idx").alias("tracks")).sort('user_idx')
+        pred_tracks = pred_tracks.select("user_id", col("recommendations.recording_idx").alias("tracks")).sort('user_id')
 
-        tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_idx', 'inner') \
-                    .rdd.map(lambda row: (row[1], row[2]))
+        tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_id', 'inner').rdd.map(lambda row: (row[1], row[2]))
         metrics = RankingMetrics(tracks_rdd)
         map = metrics.meanAveragePrecision
         prec = metrics.precisionAt(500)
@@ -93,6 +99,6 @@ if __name__ == "__main__":
     # Get file_path for dataset to analyze
     train_path = sys.argv[1]
     val_path = sys.argv[2]
-    indexer_model = sys.argv[3]
+    #indexer_model = sys.argv[3]
 
-    main(spark, train_path, val_path, indexer_model)
+    main(spark, train_path, val_path)

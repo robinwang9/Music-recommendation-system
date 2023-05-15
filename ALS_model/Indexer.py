@@ -10,7 +10,8 @@ Usage: spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 
 '''
 
 def main(spark):
-    df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_train_small_80.parquet")
+    #df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_train_small_80.parquet")
+    df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_train_val_20.parquet")
 
     # Create a temporary view of the dataframe
     df.createOrReplaceTempView("interactions")
@@ -28,7 +29,8 @@ def main(spark):
     # indexer = pipeline.fit(df_count)
     # train_df = indexer.transform(df_count)
 
-    df_count.repartition(5000, 'recording_msid').write.mode("overwrite").parquet("indexed_train_small.parquet")
+    #df_count.repartition(5000, 'recording_msid').write.mode("overwrite").parquet("indexed_train_small.parquet")
+    df_count.repartition(5000, 'recording_msid').parquet("indexed_val_small.parquet")
     # train_df.write.parquet("indexed_train_small.parquet")
 
     return df_count

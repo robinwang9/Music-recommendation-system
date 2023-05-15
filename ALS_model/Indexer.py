@@ -28,7 +28,7 @@ def main(spark):
     # indexer = pipeline.fit(df_count)
     # train_df = indexer.transform(df_count)
 
-    df_count.repartition(5000, 'recording_msid_index').write.mode("overwrite").parquet("indexed_train_small.parquet")
+    df_count.repartition(5000, 'recording_msid').write.mode("overwrite").parquet("indexed_train_small.parquet")
     # train_df.write.parquet("indexed_train_small.parquet")
 
     return df_count

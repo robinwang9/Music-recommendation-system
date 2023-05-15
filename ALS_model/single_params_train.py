@@ -16,6 +16,7 @@ from pyspark.sql.functions import col, expr
 '''
 Usage:
 $ spark-submit --deploy-mode client single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
+$ spark-submit --deploy-mode cluster single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
 $ spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
 '''
 
@@ -25,12 +26,12 @@ def main(spark, train_path, val_path):
     val = spark.read.parquet(val_path)
 
     # Use StringIndexer to convert string to numeric
-    indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_idx", handleInvalid='skip')
-    pipeline = Pipeline(stages=[indexer_recording])
-    indexer_train = pipeline.fit(train)
-    indexer_val = pipeline.fit(val)
-    train_df = indexer_train.transform(train)
-    val_df = indexer_val.transform(val)    
+    # indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_idx", handleInvalid='skip')
+    # pipeline = Pipeline(stages=[indexer_recording])
+    # indexer_train = pipeline.fit(train)
+    # indexer_val = pipeline.fit(val)
+    # train_df = indexer_train.transform(train)
+    # val_df = indexer_val.transform(val)
 
     # user_index = PipelineModel.load(indexer_model)
     # val = user_index.transform(val)

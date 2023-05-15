@@ -11,7 +11,7 @@ Usage: spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 
 
 def main(spark):
     #df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_train_small_80.parquet")
-    df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_train_val_20.parquet")
+    df = spark.read.parquet("hdfs:/user/zz4140_nyu_edu/interactions_val_small_20.parquet")
 
     # Create a temporary view of the dataframe
     df.createOrReplaceTempView("interactions")

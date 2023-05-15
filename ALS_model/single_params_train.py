@@ -15,8 +15,8 @@ from pyspark.sql.functions import col, expr
 
 '''
 Usage:
-$ spark-submit --deploy-mode client single_params_train.py hdfs:/user/zz4140/indexed_train_small.parquet hdfs:/user/zz4140/indexed_val_small.parquet
-$ spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 single_params_train.py hdfs:/user/zz4140/indexed_train_small.parquet hdfs:/user/zz4140/indexed_val_small.parquet
+$ spark-submit --deploy-mode client single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
+$ spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
 '''
 
 def main(spark, train_path, val_path):

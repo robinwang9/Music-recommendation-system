@@ -15,8 +15,8 @@ from pyspark.sql.functions import col, expr
 
 '''
 Usage:
-$ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" param_train_1st.py hdfs:/user/zz4140/train_index_downsample.parquet hdfs:/user/zz4140/1004-project-2023/interactions_val.parquet hdfs:/user/zz4140/indexer_downsample.parquet
-$ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" param_train_1st.py hdfs:/user/zz4140/interactions_train_small_80.parquet hdfs:/user/zz4140/1004-project-2023/interactions_val_small_20.parquet hdfs:/user/zz4140/indexer_downsample.parquet
+$ spark-submit --deploy-mode client single_params_train.py hdfs:/user/zz4140/indexed_train_small.parquet hdfs:/user/zz4140/indexed_val_small.parquet
+$ spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 single_params_train.py hdfs:/user/zz4140/indexed_train_small.parquet hdfs:/user/zz4140/indexed_val_small.parquet
 '''
 
 def main(spark, train_path, val_path):

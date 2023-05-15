@@ -23,6 +23,16 @@ def main(spark):
     df_count = spark.sql("SELECT user_id, recording_msid, COUNT(*) AS count FROM interactions GROUP BY user_id, recording_msid")
     df_count = df_count.select(col("user_id"), col("recording_msid"), col("count").cast("integer"))
 
+    # Extract the distinct recording_msid from the original training set
+    df_original_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
+    distinct_df = df.select("recording_msid").distinct()
+
+    # Add a column of recording_idx
+    distinct_df = distinct_df.withColumn("recording_idx", row_number().over(Window.orderBy("recording_msid")))
+
+    # Join the distinct recording_msid with the count dataframe
+    merged_df = df.join(distinct_df, on="recording_msid", how="left").drop("recording_msid")
+
     # Use StringIndexer to convert string to numeric
     # indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
     # pipeline = Pipeline(stages=[indexer_recording])
@@ -30,10 +40,10 @@ def main(spark):
     # train_df = indexer.transform(df_count)
 
     #df_count.repartition(5000, 'recording_msid').write.mode("overwrite").parquet("indexed_train_small.parquet")
-    df_count.repartition(5000, 'recording_msid').write.parquet("indexed_val_small.parquet")
+    merged_df.repartition(5000, 'recording_idx').write.parquet("indexed_val_small.parquet")
     # train_df.write.parquet("indexed_train_small.parquet")
 
-    return df_count
+    return merged_df
     spark.stop()
 
 if __name__ == "__main__":
@@ -43,4 +53,4 @@ if __name__ == "__main__":
     # Get file_path for dataset to analyze
     #parquet_file_path = sys.argv[1]
 
-    df_count = main(spark)
+    merged_df = main(spark)

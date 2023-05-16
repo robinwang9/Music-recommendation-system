@@ -27,13 +27,13 @@ def main(spark):
 
     # Extract the distinct recording_msid from the original training set
     df_original_train = spark.read.parquet("hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_train.parquet")
-    distinct_df = df.select("recording_msid").distinct()
+    distinct_df = df_original_train.select("recording_msid").distinct()
 
     # Add a column of recording_idx
     distinct_df = distinct_df.withColumn("recording_idx", row_number().over(Window.orderBy("recording_msid")))
 
     # Join the distinct recording_msid with the count dataframe
-    merged_df = df.join(distinct_df, on="recording_msid", how="inner").drop("recording_msid")
+    merged_df = df_count.join(distinct_df, on="recording_msid", how="inner").drop("recording_msid")
 
     # Use StringIndexer to convert string to numeric
     # indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')

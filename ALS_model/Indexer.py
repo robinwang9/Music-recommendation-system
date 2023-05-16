@@ -48,7 +48,7 @@ def main(spark):
 
 if __name__ == "__main__":
     # Create the spark session object
-    spark = SparkSession.builder.appName("Parquet Processing").config("spark.kryoserializer.buffer.max","512m").getOrCreate()
+    spark = (SparkSession.builder.appName("Parquet Processing").config("spark.driver.memory", '16G').config('spark.executor.memory','20g').config('spark.dynamicAllocation.enabled', True).config('spark.dynamicAllocation.minExecutors',3).getOrCreate())
 
     # Get file_path for dataset to analyze
     #parquet_file_path = sys.argv[1]

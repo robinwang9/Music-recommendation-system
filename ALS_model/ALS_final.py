@@ -16,7 +16,7 @@ from pyspark.sql.functions import col, expr
 '''
 Usage:
 $ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
-$ spark-submit --deploy-mode cluster ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
+$ spark-submit --deploy-mode client ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
 '''
 
 def main(spark, train_path, val_path):
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     #conf.set("spark.sql.shuffle.partitions", "40")
     #spark = SparkSession.builder.config(conf=conf).appName('first_train').getOrCreate()
 
-    spark = (SparkSession.builder.appName('first_step').getOrCreate())
+    spark = (SparkSession.builder.appName('first_step').config("spark.driver.memory", '16G').config('spark.executor.memory','20g').config('spark.dynamicAllocation.enabled', True).config('spark.dynamicAllocation.minExecutors',3).getOrCreate())
     # sc = SparkContext.getOrCreate()
 
     # Get file_path for dataset to analyze

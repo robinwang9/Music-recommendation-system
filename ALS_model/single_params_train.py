@@ -40,7 +40,7 @@ def main(spark, train_path, val_path):
     user_id = val.select('user_id').distinct()
     true_tracks = val.select('user_id', 'recording_idx').orderBy('user_id',"count",ascending=False).groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
-    rank_val =  [10,20,30,40,50,75,100,125] #default is 10
+    rank_val =  [10,50,100,150,200] #default is 10
     #reg_val =  [0.001, 0.005, 0.01, 0.1, 0.2, 0.5, 1, 10]  #default is 1
     #alpha_val = [0.5,1, 5, 10,20,30,50,80] #default is 1
 
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     #conf.set("spark.sql.shuffle.partitions", "40")
     #spark = SparkSession.builder.config(conf=conf).appName('first_train').getOrCreate()
 
-    spark = SparkSession.builder.appName('first_step').getOrCreate()
+    spark = SparkSession.builder.appName('first_step').config("spark.driver.memory", '16G').config('spark.executor.memory','20g').config('spark.dynamicAllocation.enabled', True).config('spark.dynamicAllocation.minExecutors',3).getOrCreate()
     # Get file_path for dataset to analyze
     train_path = sys.argv[1]
     val_path = sys.argv[2]

@@ -42,7 +42,7 @@ def main(spark):
     # train_df = indexer.transform(df_count)
 
     #df_count.repartition(5000, 'recording_msid').write.mode("overwrite").parquet("indexed_train_small.parquet")
-    merged_df.repartition(5000, 'recording_idx').write.parquet("indexed_val_small.parquet")
+    merged_df.repartition(5000, 'recording_idx').write.mode("overwrite").parquet("indexed_val_small.parquet")
     # train_df.write.parquet("indexed_train_small.parquet")
 
     return merged_df

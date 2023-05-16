@@ -75,7 +75,7 @@ def train_evaluate_model(loss, no_components, user_alpha, interactions_train, we
     return val_precision
 # Parameter search
 ranks = [20, 30, 40]
-regularizations = [0.0005, 0.005, 0.01, 0.1]
+regularizations = [0.005, 0.01, 0.1]
 
 # Add a dictionary to store precision at k scores for all parameter combinations
 precision_at_k_scores = {}

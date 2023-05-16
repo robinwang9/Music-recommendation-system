@@ -15,7 +15,7 @@ print('Final Project Extension LightFM on Full dataset')
 # Read datasets
 df_train = spark.read.parquet('/scratch/jw5487/data_final/train_data.parquet').sample(fraction=0.5, seed=42)
 df_val = spark.read.parquet('/scratch/jw5487/data_final/validation_data.parquet').sample(fraction=0.5, seed=42)
-df_test = spark.read.parquet('scratch/jw5487/data_final/test.parquet').sample(fraction=0.5, seed=42)
+df_test = spark.read.parquet('/scratch/jw5487/data_final/test.parquet').sample(fraction=0.5, seed=42)
 
 # Convert to pandas
 ratings_full_train = df_train.select("user_id", "recording_msid", "timestamp", "row_number").toPandas()
@@ -73,10 +73,12 @@ def train_evaluate_model(loss, no_components, user_alpha, interactions_train, we
     model.fit(interactions=interactions_train, sample_weight=weights_train, epochs=1, verbose=False)
     val_precision = precision_at_k(model, interactions_val, k=100).mean()
     return val_precision
-
 # Parameter search
-ranks = [10, 20, 30, 40, 50]
-regularizations = [0.0005, 0.005, 0.01, 0.1]
+ranks = [20, 30, 40]
+regularizations = [0.005, 0.01, 0.1]
+
+# Add a dictionary to store precision at k scores for all parameter combinations
+precision_at_k_scores = {}
 
 best_params = None
 best_precision = -np.inf
@@ -85,12 +87,21 @@ for rank in ranks:
         print(f"Training WARP model with rank: {rank}, regularization: {reg}")
         precision = train_evaluate_model('warp', rank, reg, interactions_train, weights_train, interactions_val)
         print(f"Precision at k=100: {precision}")
+        
+        # Store the precision at k score in the dictionary
+        precision_at_k_scores[(rank, reg)] = precision
+        
         if precision > best_precision:
             best_precision = precision
             best_params = (rank, reg)
 
 best_rank, best_reg = best_params
 print(f"Best parameters: rank={best_rank}, regularization={best_reg}")
+
+# Print precision at k scores for all parameter tests
+print("Precision at k scores for all parameter tests:")
+for params, precision in precision_at_k_scores.items():
+    print(f"Rank: {params[0]}, Regularization: {params[1]} -> Precision at k: {precision}")
 
 # Train the best model
 print("Training the best WARP model with the selected parameters")
@@ -101,5 +112,23 @@ val_precision = precision_at_k(best_model, interactions_val, k=100).mean()
 end = time.time()
 
 print("LightFM WARP model on full dataset")
+
+#graph
+#import seaborn as sns
+
+# Create a dataframe from the precision_at_k_scores dictionary
+#heatmap_data = pd.DataFrame(list(precision_at_k_scores.items()), columns=["params", "precision"])
+#heatmap_data["rank"] = heatmap_data["params"].apply(lambda x: x[0])
+#heatmap_data["regularization"] = heatmap_data["params"].apply(lambda x: x[1])
+#heatmap_data = heatmap_data.pivot("regularization", "rank", "precision")
+
+# Plot the heatmap
+#plt.figure(figsize=(8, 6))
+#sns.heatmap(heatmap_data, annot=True, fmt=".3f", cmap="YlGnBu", cbar_kws={"label": "Precision at k"})
+#plt.title("Precision at k for Different Rank and Regularization Combinations")
+#plt.xlabel("Rank")
+#plt.ylabel("Regularization")
+#plt.show()
+
 print("Precision at k is:", val_precision)
 print("Time spent is:", end - start)

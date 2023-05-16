@@ -112,5 +112,23 @@ val_precision = precision_at_k(best_model, interactions_val, k=100).mean()
 end = time.time()
 
 print("LightFM WARP model on full dataset")
+
+#graph
+#import seaborn as sns
+
+# Create a dataframe from the precision_at_k_scores dictionary
+#heatmap_data = pd.DataFrame(list(precision_at_k_scores.items()), columns=["params", "precision"])
+#heatmap_data["rank"] = heatmap_data["params"].apply(lambda x: x[0])
+#heatmap_data["regularization"] = heatmap_data["params"].apply(lambda x: x[1])
+#heatmap_data = heatmap_data.pivot("regularization", "rank", "precision")
+
+# Plot the heatmap
+#plt.figure(figsize=(8, 6))
+#sns.heatmap(heatmap_data, annot=True, fmt=".3f", cmap="YlGnBu", cbar_kws={"label": "Precision at k"})
+#plt.title("Precision at k for Different Rank and Regularization Combinations")
+#plt.xlabel("Rank")
+#plt.ylabel("Regularization")
+#plt.show()
+
 print("Precision at k is:", val_precision)
 print("Time spent is:", end - start)

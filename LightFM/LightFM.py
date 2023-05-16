@@ -15,7 +15,7 @@ print('Final Project Extension LightFM on Full dataset')
 # Read datasets
 df_train = spark.read.parquet('/scratch/jw5487/data_final/train_data.parquet').sample(fraction=0.5, seed=42)
 df_val = spark.read.parquet('/scratch/jw5487/data_final/validation_data.parquet').sample(fraction=0.5, seed=42)
-df_test = spark.read.parquet('/scratch/work/courses/DSGA1004-2021/listenbrainz/interactions_test.parquet').sample(fraction=0.5, seed=42)
+df_test = spark.read.parquet('scratch/jw5487/data_final/test.parquet').sample(fraction=0.5, seed=42)
 
 # Convert to pandas
 ratings_full_train = df_train.select("user_id", "recording_msid", "timestamp", "row_number").toPandas()

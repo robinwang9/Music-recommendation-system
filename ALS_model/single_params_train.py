@@ -41,7 +41,7 @@ def main(spark, train_path, val_path):
     true_tracks = val.select('user_id', 'recording_idx').orderBy('user_id',"count",ascending=False).groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
     rank_val =  50 #default is 10
-    reg_val =  0.05  #default is 1
+    reg_val =  0.1  #default is 1
     alpha_val = 1 #default is 1
 
     # maps=[]

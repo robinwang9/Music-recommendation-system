@@ -16,6 +16,7 @@ from pyspark.sql.functions import col, expr
 '''
 Usage:
 $ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
+$ spark-submit --deploy-mode cluster ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
 '''
 
 def main(spark, train_path, val_path):
@@ -36,15 +37,15 @@ def main(spark, train_path, val_path):
         nonnegative=True, ratingCol = 'count', rank = 50, regParam = 0.05, alpha = 1)
     model = als.fit(train)
 
-    pred_tracks = model.recommendForUserSubset(user_id,500)
+    pred_tracks = model.recommendForUserSubset(user_id,100)
     pred_tracks = pred_tracks.select("user_id", col("recommendations.recording_idx").alias("tracks")).sort('user_id')
 
     tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_id', 'inner') \
                 .rdd.map(lambda row: (row[1], row[2]))
     metrics = RankingMetrics(tracks_rdd)
     map = metrics.meanAveragePrecision
-    prec = metrics.precisionAt(500)
-    ndcg = metrics.ndcgAt(500)
+    prec = metrics.precisionAt(100)
+    ndcg = metrics.ndcgAt(100)
     print('meanAveragePrecision: ', map, 'precisionAt: ', prec, 'ndcg: ', ndcg )
 
     preds = model.transform(val)

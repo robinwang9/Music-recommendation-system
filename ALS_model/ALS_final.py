@@ -56,8 +56,9 @@ def main(spark, train_path, val_path):
     print('Saving latent factor')
     if_df = model.itemFactors
     uf_df = model.userFactors
-    if_df.repartition(1).write,format("parquet").save("itemFactors_50_0.05_1,parquet")
-    uf_df.repartition(1).write,format("parquet").save("userFactors_50_0.05_1,parquet")
+
+    #if_df.repartition(1).write,format("parquet").save("itemFactors_50_0.05_1.parquet")
+    uf_df.repartition(1).write,format("parquet").save("userFactors_50_0.05_1.parquet")
 
 
 # Only enter this block if we're in main

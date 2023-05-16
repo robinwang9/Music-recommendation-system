@@ -40,9 +40,9 @@ def main(spark, train_path, val_path):
     user_id = val.select('user_id').distinct()
     true_tracks = val.select('user_id', 'recording_idx').orderBy('user_id',"count",ascending=False).groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
-    rank_val =  150 #default is 10
+    rank_val =  50 #default is 10
     reg_val =  0.005  #default is 1
-    alpha_val = 0.1 #default is 1
+    alpha_val = 20 #default is 1
 
     # maps=[]
     # precs=[]
@@ -53,14 +53,14 @@ def main(spark, train_path, val_path):
     als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True, nonnegative=True, ratingCol = 'count', rank = rank_val, regParam = reg_val, alpha = alpha_val, numUserBlocks = 50, numItemBlocks = 50, seed=123)
     model = als.fit(train)
 
-    pred_tracks = model.recommendForUserSubset(user_id,500)
+    pred_tracks = model.recommendForUserSubset(user_id,100)
     pred_tracks = pred_tracks.select("user_id", col("recommendations.recording_idx").alias("tracks")).sort('user_id')
 
     tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_id', 'inner').rdd.map(lambda row: (row[1], row[2]))
     metrics = RankingMetrics(tracks_rdd)
     map = metrics.meanAveragePrecision
-    prec = metrics.precisionAt(500)
-    ndcg = metrics.ndcgAt(500)
+    prec = metrics.precisionAt(100)
+    ndcg = metrics.ndcgAt(100)
 
     # maps.append(map)
     # precs.append(prec)

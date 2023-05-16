@@ -34,7 +34,7 @@ def main(spark, train_path, val_path):
     true_tracks = val.select('user_id', 'recording_idx').groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
     als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True, \
-        nonnegative=True, ratingCol = 'count', rank = 50, regParam = 0.05, alpha = 1)
+        nonnegative=True, ratingCol = 'count', rank = 30, regParam = 0.05, alpha = 1)
     model = als.fit(train)
 
     pred_tracks = model.recommendForUserSubset(user_id,100)

@@ -40,47 +40,47 @@ def main(spark, train_path, val_path):
     user_id = val.select('user_id').distinct()
     true_tracks = val.select('user_id', 'recording_idx').orderBy('user_id',"count",ascending=False).groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
-    rank_val =  [150] #default is 10
-    #reg_val =  [0.001, 0.005, 0.01, 0.1, 0.2, 0.5, 1, 10]  #default is 1
-    #alpha_val = [0.5,1, 5, 10,20,30,50,80] #default is 1
+    rank_val =  150 #default is 10
+    reg_val =  0.005  #default is 1
+    alpha_val = 0.1 #default is 1
 
-    maps=[]
-    precs=[]
-    ndcgs=[]
-    rmses=[]
+    # maps=[]
+    # precs=[]
+    # ndcgs=[]
+    # rmses=[]
 
-    for i in rank_val: #change to reg or alpha #then set the rest to default
-        als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True,
-        nonnegative=True, ratingCol = 'count', rank = i, regParam = 0.05, alpha = 0.1, numUserBlocks = 50, numItemBlocks = 50, seed=123)
-        model = als.fit(train)
+    #for i in rank_val: #change to reg or alpha #then set the rest to default
+    als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True,
+    nonnegative=True, ratingCol = 'count', rank = rank_val, regParam = reg_val, alpha_val = alpha_val, numUserBlocks = 50, numItemBlocks = 50, seed=123)
+    model = als.fit(train)
 
-        pred_tracks = model.recommendForUserSubset(user_id,500)
-        pred_tracks = pred_tracks.select("user_id", col("recommendations.recording_idx").alias("tracks")).sort('user_id')
+    pred_tracks = model.recommendForUserSubset(user_id,500)
+    pred_tracks = pred_tracks.select("user_id", col("recommendations.recording_idx").alias("tracks")).sort('user_id')
 
-        tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_id', 'inner').rdd.map(lambda row: (row[1], row[2]))
-        metrics = RankingMetrics(tracks_rdd)
-        map = metrics.meanAveragePrecision
-        prec = metrics.precisionAt(500)
-        ndcg = metrics.ndcgAt(500)
+    tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_id', 'inner').rdd.map(lambda row: (row[1], row[2]))
+    metrics = RankingMetrics(tracks_rdd)
+    map = metrics.meanAveragePrecision
+    prec = metrics.precisionAt(500)
+    ndcg = metrics.ndcgAt(500)
 
-        maps.append(map)
-        precs.append(prec)
-        ndcgs.append(ndcg)
-        print('params-rank: ', i )
-        print('meanAveragePrecision: ', map, 'precisionAt: ', prec, 'ndcg: ', ndcg )
+    # maps.append(map)
+    # precs.append(prec)
+    # ndcgs.append(ndcg)
+    print('rank: ', rank_val, 'regularization param: ', reg_val, 'alpha: ', alpha_val )
+    print('meanAveragePrecision: ', map, 'precisionAt: ', prec, 'ndcg: ', ndcg )
 
-        preds = model.transform(val)
-        reg_evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",predictionCol="prediction")
-        rmse = reg_evaluator.evaluate(preds)
+    preds = model.transform(val)
+    reg_evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",predictionCol="prediction")
+    rmse = reg_evaluator.evaluate(preds)
 
-        rmses.append(rmse)
-        print('rmse: ', rmse)
+    # rmses.append(rmse)
+    print('rmse: ', rmse)
 
-    print('ranks: ', rank_val)
-    print('maps: ', maps)
-    print('precs: ', precs)
-    print('ncdgs: ', ndcgs)
-    print('rmses: ', rmses)
+    # print('ranks: ', rank_val)
+    # print('maps: ', maps)
+    # print('precs: ', precs)
+    # print('ncdgs: ', ndcgs)
+    # print('rmses: ', rmses)
 
 
 
@@ -96,7 +96,8 @@ if __name__ == "__main__":
     #conf.set("spark.sql.shuffle.partitions", "40")
     #spark = SparkSession.builder.config(conf=conf).appName('first_train').getOrCreate()
 
-    spark = SparkSession.builder.appName('first_step').config("spark.driver.memory", '16G').config('spark.executor.memory','20g').config('spark.dynamicAllocation.enabled', True).config('spark.dynamicAllocation.minExecutors',3).getOrCreate()
+    #spark = SparkSession.builder.appName('first_step').config("spark.driver.memory", '16G').config('spark.executor.memory','20g').config('spark.dynamicAllocation.enabled', True).config('spark.dynamicAllocation.minExecutors',3).getOrCreate()
+    spark = SparkSession.builder.appName('first_step').getOrCreate()
     # Get file_path for dataset to analyze
     train_path = sys.argv[1]
     val_path = sys.argv[2]

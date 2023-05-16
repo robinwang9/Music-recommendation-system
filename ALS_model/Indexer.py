@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml import Pipeline
 from pyspark.sql.functions import col
+from pyspark.sql.functions import row_number
 
 '''
 Usage: spark-submit --deploy-mode client Indexer.py

@@ -42,7 +42,7 @@ def main(spark, train_path, val_path):
 
     rank_val =  50 #default is 10
     reg_val =  0.005  #default is 1
-    alpha_val = 0.1 #default is 1
+    alpha_val = 0.01 #default is 1
 
     # maps=[]
     # precs=[]

@@ -16,7 +16,7 @@ from pyspark.sql.functions import col, expr
 '''
 Usage:
 $ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
-$ spark-submit --deploy-mode client ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
+$ spark-submit --deploy-mode cluster ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
 '''
 
 def main(spark, train_path, val_path):
@@ -34,7 +34,7 @@ def main(spark, train_path, val_path):
     true_tracks = val.select('user_id', 'recording_idx').groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
     als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True, \
-        nonnegative=True, ratingCol = 'count', rank = 100, regParam = 0.05, alpha = 1)
+        nonnegative=True, ratingCol = 'count', rank = 50, regParam = 0.005, alpha = 1)
     model = als.fit(train)
 
     pred_tracks = model.recommendForUserSubset(user_id,100)

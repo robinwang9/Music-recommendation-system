@@ -74,8 +74,8 @@ def main(spark, train_path, val_path):
 
     # rmses.append(rmse)
     #print('rmse: ', rmse)
-    print("finished training ALS model with rank50 and reg0.05 and alpha 1")
-    model.write().overwrite().save("hdfs:/user/zz4140/ALS_model_rank50_reg0.05_alpha1")
+    print(f"finished training ALS model with rank{rank_val} and reg{reg_val} and alpha {alpha_val}")
+    model.write().overwrite().save(f"hdfs:/user/zn2041/ALS_model_rank{rank_val}_reg{reg_val}_alpha{alpha_val}")
 
     # print('ranks: ', rank_val)
     # print('maps: ', maps)

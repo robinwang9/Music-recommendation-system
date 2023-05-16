@@ -15,7 +15,7 @@ from pyspark.sql.functions import col, expr
 
 '''
 Usage:
-$ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" param_train_2nd.py hdfs:/user/zz4140/train_index_downsample.parquet hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_test.parquet hdfs:/user/zz4140/indexer_downsample.parquet
+$ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" ALS_final.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_test.parquet
 '''
 
 def main(spark, train_path, val_path):
@@ -29,17 +29,17 @@ def main(spark, train_path, val_path):
 
     #train.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
     #val.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
-    user_id = val.select('user_idx').distinct()
-    true_tracks = val.select('user_idx', 'recording_idx').groupBy('user_idx').agg(expr('collect_list(recording_idx) as tracks'))
+    user_id = val.select('user_id').distinct()
+    true_tracks = val.select('user_id', 'recording_idx').groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
-    als = ALS(maxIter=10, userCol ='user_idx', itemCol = 'recording_idx', implicitPrefs = True, \
+    als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True, \
         nonnegative=True, ratingCol = 'count', rank = 30, regParam = 1, alpha = 10)
     model = als.fit(train)
 
     pred_tracks = model.recommendForUserSubset(user_id,500)
-    pred_tracks = pred_tracks.select("user_idx", col("recommendations.recording_idx").alias("tracks")).sort('user_idx')
+    pred_tracks = pred_tracks.select("user_id", col("recommendations.recording_idx").alias("tracks")).sort('user_id')
 
-    tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_idx', 'inner') \
+    tracks_rdd = pred_tracks.join(F.broadcast(true_tracks), 'user_id', 'inner') \
                 .rdd.map(lambda row: (row[1], row[2]))
     metrics = RankingMetrics(tracks_rdd)
     map = metrics.meanAveragePrecision

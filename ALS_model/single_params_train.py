@@ -68,12 +68,12 @@ def main(spark, train_path, val_path):
     print('rank: ', rank_val, 'regularization param: ', reg_val, 'alpha: ', alpha_val )
     print('meanAveragePrecision: ', map, 'precisionAt: ', prec, 'ndcg: ', ndcg )
 
-    preds = model.transform(val)
-    reg_evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",predictionCol="prediction")
-    rmse = reg_evaluator.evaluate(preds)
+    #preds = model.transform(val)
+    #reg_evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",predictionCol="prediction")
+    #rmse = reg_evaluator.evaluate(preds)
 
     # rmses.append(rmse)
-    print('rmse: ', rmse)
+    #print('rmse: ', rmse)
 
     # print('ranks: ', rank_val)
     # print('maps: ', maps)

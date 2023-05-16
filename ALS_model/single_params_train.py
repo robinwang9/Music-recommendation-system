@@ -40,7 +40,7 @@ def main(spark, train_path, val_path):
     user_id = val.select('user_id').distinct()
     true_tracks = val.select('user_id', 'recording_idx').orderBy('user_id',"count",ascending=False).groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
-    rank_val =  [50,100,150] #default is 10
+    rank_val =  [150] #default is 10
     #reg_val =  [0.001, 0.005, 0.01, 0.1, 0.2, 0.5, 1, 10]  #default is 1
     #alpha_val = [0.5,1, 5, 10,20,30,50,80] #default is 1
 
@@ -51,7 +51,7 @@ def main(spark, train_path, val_path):
 
     for i in rank_val: #change to reg or alpha #then set the rest to default
         als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True,
-        nonnegative=True, ratingCol = 'count', rank = i, regParam = 1, alpha = 1, numUserBlocks = 50, numItemBlocks = 50, seed=123)
+        nonnegative=True, ratingCol = 'count', rank = i, regParam = 0.05, alpha = 0.1, numUserBlocks = 50, numItemBlocks = 50, seed=123)
         model = als.fit(train)
 
         pred_tracks = model.recommendForUserSubset(user_id,500)

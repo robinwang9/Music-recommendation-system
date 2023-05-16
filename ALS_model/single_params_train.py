@@ -40,7 +40,7 @@ def main(spark, train_path, val_path):
     user_id = val.select('user_id').distinct()
     true_tracks = val.select('user_id', 'recording_idx').orderBy('user_id',"count",ascending=False).groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
-    rank_val =  [10,50,100,150,200] #default is 10
+    rank_val =  [50,100,150] #default is 10
     #reg_val =  [0.001, 0.005, 0.01, 0.1, 0.2, 0.5, 1, 10]  #default is 1
     #alpha_val = [0.5,1, 5, 10,20,30,50,80] #default is 1
 

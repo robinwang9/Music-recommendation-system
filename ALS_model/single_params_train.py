@@ -42,7 +42,7 @@ def main(spark, train_path, val_path):
 
     rank_val =  150 #default is 10
     reg_val =  0.005  #default is 1
-    alpha = 0.1 #default is 1
+    alpha_val = 0.1 #default is 1
 
     # maps=[]
     # precs=[]
@@ -51,7 +51,7 @@ def main(spark, train_path, val_path):
 
     #for i in rank_val: #change to reg or alpha #then set the rest to default
     als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True,
-    nonnegative=True, ratingCol = 'count', rank = rank_val, regParam = reg_val, alpha_val = alpha, numUserBlocks = 50, numItemBlocks = 50, seed=123)
+    nonnegative=True, ratingCol = 'count', rank = rank_val, regParam = reg_val, alpha = alpha_val, numUserBlocks = 50, numItemBlocks = 50, seed=123)
     model = als.fit(train)
 
     pred_tracks = model.recommendForUserSubset(user_id,500)
@@ -66,7 +66,7 @@ def main(spark, train_path, val_path):
     # maps.append(map)
     # precs.append(prec)
     # ndcgs.append(ndcg)
-    print('rank: ', rank_val, 'regularization param: ', reg_val, 'alpha: ', alpha )
+    print('rank: ', rank_val, 'regularization param: ', reg_val, 'alpha: ', alpha_val )
     print('meanAveragePrecision: ', map, 'precisionAt: ', prec, 'ndcg: ', ndcg )
 
     preds = model.transform(val)

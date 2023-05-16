@@ -18,20 +18,19 @@ Usage:
 $ spark-submit --driver-memory=8g --executor-memory=8g --conf "spark.blacklist.enabled=false" param_train_2nd.py hdfs:/user/zz4140/train_index_downsample.parquet hdfs:/user/bm106_nyu_edu/1004-project-2023/interactions_test.parquet hdfs:/user/zz4140/indexer_downsample.parquet
 '''
 
-def main(spark, train_path, val_path, indexer_model):
+def main(spark, train_path, val_path):
     '''
     '''
     train = spark.read.parquet(train_path)
     val = spark.read.parquet(val_path)
-    user_index = PipelineModel.load(indexer_model)
-    val = user_index.transform(val)
-    val = val.select('user_idx','recording_idx','count')
+    # user_index = PipelineModel.load(indexer_model)
+    # val = user_index.transform(val)
+    # val = val.select('user_idx','recording_idx','count')
 
     #train.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
     #val.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
     user_id = val.select('user_idx').distinct()
-    true_tracks = val.select('user_idx', 'recording_idx').groupBy('user_idx')\
-                .agg(expr('collect_list(recording_idx) as tracks'))
+    true_tracks = val.select('user_idx', 'recording_idx').groupBy('user_idx').agg(expr('collect_list(recording_idx) as tracks'))
 
     als = ALS(maxIter=10, userCol ='user_idx', itemCol = 'recording_idx', implicitPrefs = True, \
         nonnegative=True, ratingCol = 'count', rank = 30, regParam = 1, alpha = 10)
@@ -66,12 +65,12 @@ if __name__ == "__main__":
     #conf.set("spark.sql.shuffle.partitions", "40")
     #spark = SparkSession.builder.config(conf=conf).appName('first_train').getOrCreate()
 
-    spark = SparkSession.builder.appName('first_step').getOrCreate()
-    sc = SparkContext.getOrCreate()
+    spark = (SparkSession.builder.appName('first_step').getOrCreate())
+    # sc = SparkContext.getOrCreate()
 
     # Get file_path for dataset to analyze
     train_path = sys.argv[1]
     val_path = sys.argv[2]
-    indexer_model = sys.argv[3]
+    #indexer_model = sys.argv[3]
 
-    main(spark, train_path, val_path, indexer_model)
+    main(spark, train_path, val_path)

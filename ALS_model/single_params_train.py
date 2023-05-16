@@ -16,7 +16,7 @@ from pyspark.sql.functions import col, expr
 '''
 Usage:
 $ spark-submit --deploy-mode client single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
-$ spark-submit --deploy-mode cluster single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
+$ spark-submit --deploy-mode cluster single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquetls
 $ spark-submit --deploy-mode cluster --num-executors 10 --executor-cores 4 single_params_train.py hdfs:/user/zz4140_nyu_edu/indexed_train_small.parquet hdfs:/user/zz4140_nyu_edu/indexed_val_small.parquet
 '''
 
@@ -50,8 +50,7 @@ def main(spark, train_path, val_path):
     # rmses=[]
 
     #for i in rank_val: #change to reg or alpha #then set the rest to default
-    als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True,
-    nonnegative=True, ratingCol = 'count', rank = rank_val, regParam = reg_val, alpha = alpha_val, numUserBlocks = 50, numItemBlocks = 50, seed=123)
+    als = ALS(maxIter=10, userCol ='user_id', itemCol = 'recording_idx', implicitPrefs = True, nonnegative=True, ratingCol = 'count', rank = rank_val, regParam = reg_val, alpha = alpha_val, numUserBlocks = 50, numItemBlocks = 50, seed=123)
     model = als.fit(train)
 
     pred_tracks = model.recommendForUserSubset(user_id,500)

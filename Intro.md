@@ -25,7 +25,8 @@ This Introduction is written in Markdown and to give an overview of the project.
         - timestamp: timestamp (nullable = true)
 
 - `data_split.py`: This file return a validation set and a training data
-    > NOT FINISHED YET
+    > spark-submit --deploy-mode client data_split.py
+    - We have tried to ignore the users who have less than 50 interactions, but the number of results is still too many, so we decide to ignore the users who have less than 100 interactions. 20,409,672 interactions are left in the training set after splitting, and 5103798 interactions are left in the validation set.
 - `count.py`: This file counts the number of times each user_id listen to different tracks, and output the result to a parquet file
     > Usage: $ spark-submit --deploy-mode client count.py
     - Schema of the output file:
@@ -44,11 +45,27 @@ This Introduction is written in Markdown and to give an overview of the project.
         - NDCG
 
 ## Roadmap:
+-`Baseline model`:
 ```mermaid
 graph LR
-    A[original dataset] --count.py--> B[user/track count]
-    B --data_split.py--> C[train/validation set]
+    A[original dataset]
+    A --data_split.py--> C[train/validation set]
     C --pop_items.py--> D[get 500 most popular items]
     D --baseline.py--> E[Baseline recommender system/evaluation]
     C --baseline.py--> E
+```
+
+-`ALS model`:
+```mermaid
+
+graph LR
+
+A[train/val sets] --Index_Model_StringIndexer--> B[Indexed train/val sets]
+B --Single_Parameter_Tunning--> C[MAP/ncdg/rmse based on different params]
+```
+
+```mermaid
+graph LR
+C[MAP/ncdg/rmse based on different params] --Grid_Searching--> D[Best params combo]
+D --ALS Model+Best params combo--> E[Result]
 ```

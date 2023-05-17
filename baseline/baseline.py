@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 '''Script to evaluate a baseline popularity model
 Usage:
-    $ spark-submit --driver-memory 8g --executor-memory 8g baseline.py hdfs:/user/zz4140/1004-project-2023/items_popular.parquet hdfs:/user/zz4140/1004-project-2023/validation_sort.parquet
-
+    $ spark-submit --driver-memory 8g --executor-memory 8g baseline.py hdfs:/user/zz4140_nyu_edu/items_popular.parquet hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
+    or spark-submit baseline.py hdfs:/user/zz4140_nyu_edu/items_popular.parquet hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
 Returns:
     Precision at 15
     MAP
@@ -23,17 +23,17 @@ def main(spark, input_file_path, input_val_file_path):
     Parameters
     ----------
     spark : SparkSession object
-    file_path_in_base: top 500 songs hdfs:/user/zz4140/1004-project-2023/items_popular.parquet
-    file_path_in_val: sorted validation data to use hdfs:/user/zz4140/1004-project-2023/validation_sort.parquet
+    input_file_path: top 500 tracks hdfs:/user/zz4140_nyu_edu/items_popular.parquet
+    input_val_file_path: sorted validation data to use hdfs:/user/zz4140_nyu_edu/interactions_val.parquet
     '''        
     # Loads the parquet files
     track_pop = spark.read.parquet(input_file_path)
     track_val = spark.read.parquet(input_val_file_path)
     
     # Create a hash column as the ID column
-    track_pop = track_pop.withColumn("track_hashId", func.hash("track_id"))
+    track_pop = track_pop.withColumn("track_hashId", func.hash("recording_msid"))
     track_val = track_val.withColumn("user_hashId", func.hash("user_id"))
-    track_val = track_val.withColumn("track_hashId", func.hash("track_id"))
+    track_val = track_val.withColumn("track_hashId", func.hash("recording_msid"))
     
     # Get the users from the val file
     users = track_val.select(track_val.user_hashId).distinct() 
@@ -48,11 +48,11 @@ def main(spark, input_file_path, input_val_file_path):
     
     # Collapse validation file in the same manner
     track_val_agg = track_val.groupby("user_hashId").agg(func.collect_list("track_hashId"))
-    track_val_agg = track_val.withColumnRenamed("collect_list(track_hashId)", "truth")
+    track_val_agg = track_val_agg.withColumnRenamed("collect_list(track_hashId)", "truth")
    
    
     # EVALUATION
-    predictionAndLabels = user_pop_agg.join(songs_val_agg, ["user_hashId"])
+    predictionAndLabels = user_pop_agg.join(track_val_agg, ["user_hashId"])
     predictionAndLabels = predictionAndLabels.select("pop_track", "truth")
     predictionAndLabels_rdd = predictionAndLabels.rdd
     

@@ -36,11 +36,6 @@ def main(spark):
     # Join the distinct recording_msid with the count dataframe
     merged_df = df_count.join(distinct_df, on="recording_msid", how="inner").drop("recording_msid")
 
-    # Use StringIndexer to convert string to numeric
-    # indexer_recording = StringIndexer(inputCol="recording_msid", outputCol="recording_msid_index", handleInvalid='skip')
-    # pipeline = Pipeline(stages=[indexer_recording])
-    # indexer = pipeline.fit(df_count)
-    # train_df = indexer.transform(df_count)
 
     merged_df.repartition(5000, 'recording_idx').write.mode("overwrite").parquet("indexed_test.parquet")
     #merged_df.repartition(5000, 'recording_idx').write.mode("overwrite").parquet("indexed_val_small.parquet")
@@ -52,8 +47,5 @@ def main(spark):
 if __name__ == "__main__":
     # Create the spark session object
     spark = (SparkSession.builder.appName("Parquet Processing").config("spark.driver.memory", '16G').config('spark.executor.memory','20g').config('spark.dynamicAllocation.enabled', True).config('spark.dynamicAllocation.minExecutors',3).getOrCreate())
-
-    # Get file_path for dataset to analyze
-    #parquet_file_path = sys.argv[1]
 
     merged_df = main(spark)

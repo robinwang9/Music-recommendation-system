@@ -24,12 +24,7 @@ def main(spark, train_path, val_path):
     '''
     train = spark.read.parquet(train_path)
     val = spark.read.parquet(val_path)
-    # user_index = PipelineModel.load(indexer_model)
-    # val = user_index.transform(val)
-    # val = val.select('user_idx','recording_idx','count')
 
-    #train.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
-    #val.persist(pyspark.StorageLevel.MEMORY_AND_DISK)
     user_id = val.select('user_id').distinct()
     true_tracks = val.select('user_id', 'recording_idx').groupBy('user_id').agg(expr('collect_list(recording_idx) as tracks'))
 
@@ -58,20 +53,11 @@ def main(spark, train_path, val_path):
     uf_df = model.userFactors
 
     #if_df.repartition(1).write,format("parquet").save("itemFactors_50_0.05_1.parquet")
-    uf_df.repartition(1).write,format("parquet").save("userFactors_50_0.05_1.parquet")
+    #uf_df.repartition(1).write,format("parquet").save("userFactors_50_0.05_1.parquet")
 
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
-    #conf = SparkConf()
-    #conf.set("spark.executor.memory", "16G")
-    #conf.set("spark.driver.memory", '16G')
-    #conf.set("spark.executor.cores", "4")
-    #conf.set('spark.executor.instances','10')
-    #conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    #conf.set("spark.default.parallelism", "40")
-    #conf.set("spark.sql.shuffle.partitions", "40")
-    #spark = SparkSession.builder.config(conf=conf).appName('first_train').getOrCreate()
 
     spark = (SparkSession.builder.appName('first_step').config("spark.driver.memory", '16G').config('spark.executor.memory','20g').config('spark.dynamicAllocation.enabled', True).config('spark.dynamicAllocation.minExecutors',3).getOrCreate())
     # sc = SparkContext.getOrCreate()
@@ -79,6 +65,5 @@ if __name__ == "__main__":
     # Get file_path for dataset to analyze
     train_path = sys.argv[1]
     val_path = sys.argv[2]
-    #indexer_model = sys.argv[3]
 
     main(spark, train_path, val_path)
